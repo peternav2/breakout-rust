@@ -9,6 +9,7 @@ const BALL_SPEED: f32 = 400f32;
 
 struct Player {
     rect: Rect,
+    lives: i32,
 }
 
 impl Player {
@@ -19,7 +20,9 @@ impl Player {
                       screen_height() - 100f32,
                       PLAYER_SIZE.x,
                       PLAYER_SIZE.y
-                      )
+                      ),
+            lives: 3
+
         }
     }
     pub fn draw(&self) {
@@ -160,6 +163,13 @@ async fn main() {
             }
         }
         blocks.retain(|block| block.lives > 0);
+        let balls_len = balls.len();
+        let was_last_ball = balls_len == 1;
+        balls.retain(|ball| ball.rect.y < screen_height());
+        let removed_balls = balls_len - balls.len();
+        if removed_balls > 0 && was_last_ball {
+            player.lives -= 1;
+        }
         clear_background(WHITE);
         player.draw();
         for block in blocks.iter() {
@@ -168,11 +178,12 @@ async fn main() {
         for ball in balls.iter() {
             ball.draw();
         }
-        let score_text = format!("score: {}", score);
+        let score_text = format!("score: {} lives: {}", score, player.lives);
         let text_size = measure_text(&score_text,None, 30u16, 1.0);
         draw_text(
             &score_text,
             screen_width() * 0.5f32 - text_size.width * 0.5f32,
+
             40.0,
             30f32,
             BLACK
