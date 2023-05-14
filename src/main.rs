@@ -168,7 +168,7 @@ async fn main() {
         balls.retain(|ball| ball.rect.y < screen_height());
         let removed_balls = balls_len - balls.len();
         if removed_balls > 0 && was_last_ball {
-            player.lives -= 1;
+            player_lives -= 1;
         }
         clear_background(WHITE);
         player.draw();
